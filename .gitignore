@@ -1,0 +1,7 @@
+GitCmd/x64
+GitCmd/debug
+GitTest/x64
+GitTest/debug
+/x64
+*.vcxproj.user
+.vs
