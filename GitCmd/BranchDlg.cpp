@@ -3,12 +3,12 @@
 #include <map>
 #include <memory>
 
-Plugin& plugin = Plugin::GetPlugin();
+static Plugin& plugin = Plugin::GetPlugin();
 
-std::vector <FarListItem> listItem;
-FarList list;
+static std::vector <FarListItem> listItem;
+static FarList list;
 
-GitCtl* pGitCtl;
+static GitCtl* pGitCtl;
 
 void BranchListUpdate()
 {

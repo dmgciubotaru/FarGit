@@ -8,14 +8,17 @@
     <Filter Include="GitCtl">
       <UniqueIdentifier>{06a9b445-e819-4855-b835-2d4ae543808a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="BranchView">
-      <UniqueIdentifier>{8f7f4565-ed33-49d3-935e-a56ff3da1661}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Plugin">
       <UniqueIdentifier>{4fd46f47-0030-4400-b064-50f973fedbed}</UniqueIdentifier>
     </Filter>
     <Filter Include="Dialogs">
       <UniqueIdentifier>{a02a0196-e901-44a4-90a7-6be9b39123f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialogs\Branch">
+      <UniqueIdentifier>{5a0f0a80-c41f-488f-a45b-5a768c2c821e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialogs\Status">
+      <UniqueIdentifier>{9b1a09f9-ede7-4068-865f-f8e7be444ab5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -25,17 +28,17 @@
     <ClCompile Include="gitctl.cpp">
       <Filter>GitCtl</Filter>
     </ClCompile>
-    <ClCompile Include="BranchView.cpp">
-      <Filter>BranchView</Filter>
-    </ClCompile>
     <ClCompile Include="Plugin.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
-    <ClCompile Include="BranchDlg.cpp">
-      <Filter>Dialogs</Filter>
-    </ClCompile>
     <ClCompile Include="dbg.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BranchDlg.cpp">
+      <Filter>Dialogs\Branch</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusDlg.cpp">
+      <Filter>Dialogs\Status</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,20 +50,20 @@
     <ClInclude Include="gitctl.hpp">
       <Filter>GitCtl</Filter>
     </ClInclude>
-    <ClInclude Include="BranchView.hpp">
-      <Filter>BranchView</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Plugin.hpp">
       <Filter>Plugin</Filter>
     </ClInclude>
-    <ClInclude Include="BranchDlg.hpp">
-      <Filter>Dialogs</Filter>
-    </ClInclude>
     <ClInclude Include="dbg.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BranchDlg.hpp">
+      <Filter>Dialogs\Branch</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusDlg.hpp">
+      <Filter>Dialogs\Status</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

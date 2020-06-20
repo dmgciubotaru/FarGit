@@ -23,7 +23,6 @@ void test()
 {
 	GitCtl git;
 	git.Open("C:\\tmp\\testrepo\\");
-	auto s = git.GetCurrentBranch();
 	auto x = git.GetStatus();
-	git.Checkout("master");
+	int a = 1;
 }

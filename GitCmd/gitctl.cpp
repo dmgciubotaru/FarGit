@@ -100,6 +100,25 @@ std::vector<GitFileStatus> GitCtl::GetStatus()
 	return statuses;
 }
 
+void GitCtl::CheckoutPath(const std::string& path)
+{
+	git_checkout_options opt;
+	const char* pathStr = path.c_str();
+	CHECK(git_checkout_options_init(&opt, GIT_CHECKOUT_OPTIONS_VERSION));
+	opt.paths.strings = (char **) &pathStr;
+	opt.paths.count = 1;
+	opt.checkout_strategy = GIT_CHECKOUT_FORCE;
+	CHECK(git_checkout_head(m_repo, &opt));
+}
+
+void GitCtl::StageFile(const std::string& path)
+{
+	git_index *index;
+	CHECK(git_repository_index(&index, m_repo));
+	CHECK(git_index_add_bypath(index, path.c_str()));
+	CHECK(git_index_write(index));
+}
+
 std::string GitCtl::GetRepoRoot(const std::string& path)
 {
 	git_buf root;
@@ -126,7 +145,86 @@ int GitCtl::GetStatusCB(const char* path, unsigned int status_flags, void* paylo
 	std::vector<GitFileStatus>* statuses = (std::vector<GitFileStatus>*)payload;
 	if (status_flags != GIT_STATUS_IGNORED)
 	{
-		GitFileStatus status = { path, (git_status_t)status_flags };
+		GitFileStatus status = {{GIT_FILE_STATUS_NONE, GIT_FILE_STATUS_NONE, GIT_FILE_STATUS_NONE}, path};
+		switch (status_flags & 0x1f)
+		{
+		case 0:
+		{
+			break;
+		}
+		case GIT_STATUS_INDEX_NEW:
+		{
+			status.status[GIT_FILE_STATUS_INDEX] = 'N';
+			break;
+		}
+		case GIT_STATUS_INDEX_MODIFIED:
+		{
+			status.status[GIT_FILE_STATUS_INDEX] = 'M';
+			break;
+		}
+		case GIT_STATUS_INDEX_DELETED:
+		{
+			status.status[GIT_FILE_STATUS_INDEX] = 'D';
+			break;
+		}
+		case GIT_STATUS_INDEX_RENAMED:
+		{
+			status.status[GIT_FILE_STATUS_INDEX] = 'R';
+			break;
+		}
+		case GIT_STATUS_INDEX_TYPECHANGE:
+		{
+			status.status[GIT_FILE_STATUS_INDEX] = 'T';
+			break;
+		}
+		default:
+			throw "Multiple flags found";
+		}
+		
+		switch (status_flags & (0x3f << 7))
+		{
+		case 0:
+		{
+			break;
+		}
+		case GIT_STATUS_WT_NEW:
+		{
+			status.status[GIT_FILE_STATUS_WORKSPACE] = 'N';
+			break;
+		}
+		case GIT_STATUS_WT_MODIFIED:
+		{
+			status.status[GIT_FILE_STATUS_WORKSPACE] = 'M';
+			break;
+		}
+		case GIT_STATUS_WT_DELETED:
+		{
+			status.status[GIT_FILE_STATUS_WORKSPACE] = 'D';
+			break;
+		}
+		case GIT_STATUS_WT_RENAMED:
+		{
+			status.status[GIT_FILE_STATUS_WORKSPACE] = 'R';
+			break;
+		}
+		case GIT_STATUS_WT_TYPECHANGE:
+		{
+			status.status[GIT_FILE_STATUS_WORKSPACE] = 'T';
+			break;
+		}
+		case GIT_STATUS_WT_UNREADABLE:
+		{
+			status.status[GIT_FILE_STATUS_WORKSPACE] = 'U';
+			break;
+		}
+		default:
+			throw "Multiple flags found";
+		}
+
+		if (status_flags & GIT_STATUS_CONFLICTED)
+		{
+			status.status[GIT_FILE_STATUS_CONFLICT] = 'C';
+		}
 		statuses->push_back(status);
 	}
 	return 0;

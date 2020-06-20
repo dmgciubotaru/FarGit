@@ -171,16 +171,16 @@
     <ClCompile Include="dbg.cpp" />
     <ClCompile Include="gitctl.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="BranchView.cpp" />
     <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="StatusDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BranchDlg.hpp" />
     <ClInclude Include="dbg.hpp" />
     <ClInclude Include="gitctl.hpp" />
-    <ClInclude Include="BranchView.hpp" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Plugin.hpp" />
+    <ClInclude Include="StatusDlg.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

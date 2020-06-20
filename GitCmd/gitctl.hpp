@@ -5,10 +5,16 @@
 #include <string>
 #include <vector>
 
+
+#define GIT_FILE_STATUS_INDEX 0
+#define GIT_FILE_STATUS_WORKSPACE 1
+#define GIT_FILE_STATUS_CONFLICT 2
+#define GIT_FILE_STATUS_NONE '-'
+
 struct GitFileStatus
 {
+	char status[3]; // Index|WorkingDir|Conflict
 	std::string path;
-	git_status_t status;
 };
 
 class GitCtl
@@ -17,19 +23,17 @@ public:
 	GitCtl();
 
 	void Open(const std::string& path);
-	const std::string& GetLastError();
 
 	// Branches
 	std::vector<std::string> GetBranches();
 	std::string GetCurrentBranch();
-	void Checkout(const std::string& branch);
+	void Checkout(const std::string& branch);	// Switch to target branch
 	void DeleteBranch(const std::string& branch);
 	
-
-
 	// Status
 	std::vector<GitFileStatus> GetStatus();
-
+	void CheckoutPath(const std::string& path); // Revert path to HEAD
+	void StageFile(const std::string& path);	// Stage file for commit
 
 	static std::string GetRepoRoot(const std::string& path);
 
