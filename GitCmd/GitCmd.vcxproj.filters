@@ -40,6 +40,9 @@
     <ClCompile Include="StatusDlg.cpp">
       <Filter>Dialogs\Status</Filter>
     </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
@@ -64,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="StatusDlg.hpp">
       <Filter>Dialogs\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

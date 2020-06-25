@@ -1,4 +1,5 @@
 #include "BranchDlg.hpp"
+#include "utils.h"
 
 #include <map>
 #include <memory>
@@ -10,26 +11,8 @@ static FarList list;
 
 static GitCtl* pGitCtl;
 
-void BranchListUpdate()
-{
-	listItem.clear();
 
-	auto currentBranch = pGitCtl->GetCurrentBranch();
-
-	for (auto b : pGitCtl->GetBranches())
-	{
-		if (b != currentBranch)
-		{
-			listItem.push_back({});
-			strcpy(listItem.back().Text, b.c_str());
-		}
-	}
-
-	list.ItemsNumber = (int)listItem.size();
-	list.Items = listItem.data();
-}
-
-void BranchListFilter(HANDLE hDlg)
+void BranchListUpdate(HANDLE hDlg)
 {
 	char filter[1024];
 	FarDialogItemData filterData = { 1024, (char*)&filter };
@@ -38,23 +21,30 @@ void BranchListFilter(HANDLE hDlg)
 	filterData.PtrLength = (int)plugin->SendDlgMessage(hDlg, DM_GETTEXT, 1, NULL);
 	plugin->SendDlgMessage(hDlg, DM_GETTEXT, 1, (LONG_PTR)&filterData);
 
-	for (auto& item : listItem)
-	{
-		std::string s1, s2;
-		s1 = item.Text;
-		s2 = filter;
-		std::transform(s1.begin(), s1.end(), s1.begin(), [](unsigned char c) { return std::toupper(c); });
-		std::transform(s2.begin(), s2.end(), s2.begin(), [](unsigned char c) { return std::toupper(c); });
+	listItem.clear();
 
-		if (std::string(s1).find(s2) == std::string::npos)
+	auto currentBranch = pGitCtl->GetCurrentBranch();
+
+	for (auto b : pGitCtl->GetBranches())
+	{
+		FarListItem item{ 0 };
+		strcpy(item.Text, b.c_str());
+
+		if (ToUpper(b) == ToUpper(currentBranch))
+		{
+			item.Flags |= LIF_DISABLE;
+		}
+
+		if (ToUpper(b).find(ToUpper(filter)) == std::string::npos)
 		{
 			item.Flags |= LIF_HIDDEN;
 		}
-		else
-		{
-			item.Flags &= ~LIF_HIDDEN;
-		}
+
+		listItem.push_back(item);
 	}
+
+	list.ItemsNumber = (int)listItem.size();
+	list.Items = listItem.data();
 
 	// Update list content
 	plugin->SendDlgMessage(hDlg, DM_LISTDELETE, 0, NULL);
@@ -65,6 +55,12 @@ LONG_PTR WINAPI BranchDlgCB(HANDLE hDlg, int msg, int par1, LONG_PTR par2)
 {
 	switch (msg)
 	{
+	case DN_INITDIALOG:
+	{
+		BranchListUpdate(hDlg);
+		return plugin->DefDlgProc(hDlg, msg, par1, par2);
+	}
+
 	case DN_KEY:
 	{
 		if ((par2 >= 0x20 && par2 <= 0x7F) || par2 == '\b')
@@ -75,7 +71,7 @@ LONG_PTR WINAPI BranchDlgCB(HANDLE hDlg, int msg, int par1, LONG_PTR par2)
 			plugin->SendDlgMessage(hDlg, DM_SETFOCUS, 0, 0);
 
 			// Set hidden items
-			BranchListFilter(hDlg);
+			BranchListUpdate(hDlg);
 			
 			return TRUE;
 		}
@@ -94,7 +90,6 @@ LONG_PTR WINAPI BranchDlgCB(HANDLE hDlg, int msg, int par1, LONG_PTR par2)
 
 		case KEY_DEL:
 		{
-			const char* Msg[5];
 			FarListPos listPos;
 
 			plugin->SendDlgMessage(hDlg, DM_LISTGETCURPOS, 0, (LONG_PTR)&listPos);
@@ -103,14 +98,8 @@ LONG_PTR WINAPI BranchDlgCB(HANDLE hDlg, int msg, int par1, LONG_PTR par2)
 				return plugin->DefDlgProc(hDlg, msg, par1, par2);
 			}
 
-			Msg[0] = "Delete";
-			Msg[1] = "Do you wish to delete the branch";
-			Msg[2] = listItem[listPos.SelectPos].Text;
-			Msg[3] = "Delete";
-			Msg[4] = "Cancel";
-
-			if (plugin->Message(plugin->ModuleNumber, 0, "DeleteFile", Msg,
-				sizeof(Msg) / sizeof(Msg[0]), 2) == 0)
+			if(plugin.ShowConfirm("Confirm branch delete", 
+				fmt::format("Delete branch \"{}\"?", listItem[listPos.SelectPos].Text)))
 			{
 				try 
 				{
@@ -123,8 +112,7 @@ LONG_PTR WINAPI BranchDlgCB(HANDLE hDlg, int msg, int par1, LONG_PTR par2)
 				}
 			}
 
-			BranchListUpdate();
-			BranchListFilter(hDlg);
+			BranchListUpdate(hDlg);
 
 			return plugin->DefDlgProc(hDlg, msg, par1, par2);
 		}
@@ -143,8 +131,6 @@ LONG_PTR WINAPI BranchDlgCB(HANDLE hDlg, int msg, int par1, LONG_PTR par2)
 void BranchDlgShow(GitCtl& gitCtl)
 {
 	pGitCtl = &gitCtl;
-
-	BranchListUpdate();
 
 	FarDialogItem dialogItems[] = {
 		{DI_LISTBOX  ,  1,  1, 98, 24, TRUE, (DWORD_PTR)&list, DIF_LISTWRAPMODE, 0, "Branch List"},

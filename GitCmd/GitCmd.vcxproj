@@ -173,6 +173,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="StatusDlg.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BranchDlg.hpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="Plugin.hpp" />
     <ClInclude Include="StatusDlg.hpp" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
