@@ -12,8 +12,10 @@ static GitCtl* pGitCtl;
 
 void StatusDiff(const std::string& path, bool cached)
 {
-	plugin.Debug(fmt::format("git diff {} {} > NUL", cached ? "--cached" : "", path).c_str());
-	system(fmt::format("git diff {} {} > NUL",cached ? "--cached":"", path).c_str());
+	std::string s = fmt::format("cd \"{}..\" && git diff {} \"{}\" > NUL",pGitCtl->GetRepoRoot(), 
+		cached ? "--cached" : "", path);
+	plugin.Debug(s.c_str());
+	system(s.c_str());
 }
 
 void StatusListFilter(HANDLE hDlg)

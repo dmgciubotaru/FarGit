@@ -36,6 +36,7 @@ public:
 	void StageFile(const std::string& path);	// Stage file for commit
 
 	static std::string GetRepoRoot(const std::string& path);
+	std::string GetRepoRoot();
 
 private:
 	git_repository* m_repo;

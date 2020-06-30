@@ -135,6 +135,11 @@ std::string GitCtl::GetRepoRoot(const std::string& path)
 	return rootStr;
 }
 
+std::string GitCtl::GetRepoRoot()
+{
+	return (git_repository_path(m_repo));
+}
+
 void GitCtl::GetBranchRef(git_reference*& ref, const std::string& branch)
 {
 	CHECK(git_branch_lookup(&ref, m_repo, branch.c_str(), GIT_BRANCH_LOCAL));
