@@ -149,7 +149,14 @@ void BranchDlgShow(GitCtl& gitCtl)
 	{
 		
 		std::string selected = listItem[dialogItems[0].ListPos].Text;
-		gitCtl.Checkout(selected);
+		try
+		{
+			gitCtl.Checkout(selected);
+		}
+		catch (const char* err)
+		{
+			plugin.ShowError(err);
+		}
 
 		plugin.Debug(fmt::format("Selected {}", selected));
 	}
